@@ -3,33 +3,50 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	// "reflect"
 )
-
-//用 getApiResult() 的回傳解析出 id username currency cash
-//2-1 設計struct承接ip host port
-//2-2 新增一組設定
-//2-3 利用指標 完成 updateSetting()
-//在不用回傳的情況下將 jsonviewer.stack.hu 這組的port改成80
 
 func main() {
 
 	Q1()
-	Q2()
+
+	ipList := []string{"192.17.55.3", "192.17.33.17", "192.17.99.52"}
+	hostList := []string{"docs.google.com", "ts-phpadmin.vir999.com", "jsonviewer.stack.hu"}
+	portList := []int{80, 80, 7711}
+	Q2(ipList, hostList, portList)
 }
 
-func Q2() {
-	/* Q2-1
-	IP:192.17.55.3	Host:docs.google.com 		Port:80
-	IP:192.17.33.17 Host:ts-phpadmin.vir999.com Port:80
-	IP:192.17.99.52 Host:jsonviewer.stack.hu 	Port:7711
-	*/
+func Q2(ipList []string, hostList []string, portList []int) {
+	var containPool []Q2struct
 
-	/* Q2-2
-	IP:177.18.2.33 Host:github.com Port:80
-	*/
+	//2-1
+	for i := 0; i < 3; i++ {
+		contain := Q2struct{
+			IP:   ipList[i],
+			HOST: hostList[i],
+			PORT: portList[i],
+		}
 
-	// Q2-3
-	//updateSetting
+		containPool = append(containPool, contain)
+	}
+	fmt.Println("2-1 = \n", containPool)
+
+	//2-2 新增 嗯?
+	contain := Q2struct{
+		IP:   "177.18.2.33",
+		HOST: "github.com",
+		PORT: 80,
+	}
+	containPool = append(containPool, contain)
+	fmt.Println("2-2 = \n", containPool)
+
+	//2-3 point updata
+	updateSetting(&containPool[2].PORT)
+	fmt.Println("2-3 = \n", containPool)
+}
+
+func updateSetting(point *int) {
+	*point = 80
 
 }
 
@@ -37,10 +54,6 @@ type Q2struct struct {
 	IP   string
 	HOST string
 	PORT int
-}
-
-func updateSetting() {
-
 }
 
 func Q1() {
@@ -51,10 +64,10 @@ func Q1() {
 		fmt.Println(err.Error())
 	}
 	//讓我看看
-	fmt.Printf("id %+v \n", result.Ret[0].ID)
-	fmt.Printf("username %+v \n", result.Ret[0].Username)
-	fmt.Printf("Currency %+v \n", result.Ret[0].Currency)
-	fmt.Printf("Cash %+v \n", result.Ret[0].Cash)
+	fmt.Printf("1-1 id %+v \n", result.Ret[0].ID)
+	fmt.Printf("1-1 username %+v \n", result.Ret[0].Username)
+	fmt.Printf("1-1 Currency %+v \n", result.Ret[0].Currency)
+	fmt.Printf("1-1 Cash %+v \n", result.Ret[0].Cash)
 }
 
 func getApiResult() []byte {

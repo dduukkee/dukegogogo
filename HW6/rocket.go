@@ -1,32 +1,39 @@
 package main
 
 import (
+	"RInt"
 	"fmt"
 	"time"
 )
 
-type rocket struct {
+type rocket1 struct {
 	time time.Duration
 }
 
-type RocketInterface interface {
-	gogo() bool
+type rocket2 struct {
+	time time.Duration
 }
 
-////////////
-func (r rocket) gogo() bool {
+func (r rocket1) Gogo() bool {
 	for i := r.time; i > 0; i-- {
-		fmt.Printf("倒數%v秒發射\n", i)
+		fmt.Printf("一號倒數%v秒發射\n", i)
+		time.Sleep(time.Duration(1) * time.Second)
+	}
+	return true
+}
+
+func (r rocket2) Gogo() bool {
+	for i := r.time; i > 0; i-- {
+		fmt.Printf("二號倒數%v秒發射\n", i)
 		time.Sleep(time.Duration(1) * time.Second)
 	}
 	return true
 }
 
 func main() {
-	rocket := rocket{time: 3}
-	RunRocket(rocket)
-}
+    rocket1 := rocket1{time: 3}
+    rocket2 := rocket2{time: 5}
+    RInt.Launch(rocket1)
+	RInt.Launch(rocket2)
 
-func RunRocket(c RocketInterface) {
-	fmt.Printf("發射測試 %v \n", c.gogo())
 }

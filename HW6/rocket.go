@@ -35,5 +35,4 @@ func main() {
     rocket2 := rocket2{time: 5}
     RInt.Launch(rocket1)
 	RInt.Launch(rocket2)
-
 }

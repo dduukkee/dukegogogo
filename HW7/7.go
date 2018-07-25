@@ -6,7 +6,7 @@
 package main
 
 import (
-	"./InterFace7"
+	"InterFace7"
 )
 
 type iphone1 struct {

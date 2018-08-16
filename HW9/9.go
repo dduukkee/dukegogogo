@@ -9,54 +9,44 @@ import (
 	"net/http"
 )
 
-type Product struct {
+type Weather struct {
 	gorm.Model
-	Code    string
-	weather uint
+	Code string
+	Data string
 }
 
 func main() {
-	//////////db	//////////
-	db, err := gorm.Open("sqlite3", "test.db")
-	// 	if err != nil {
-	// 		panic("failed to connect database")
-	// 	}
-	// 	defer db.Close()
 
-	// Migrate the schema
-	db.AutoMigrate(&Product{})
-
-	// 创建
-	db.Create(&Product{Code: "api", weather: 1000})
-
-	// 读取
-	var product Product
-	db.First(&product, "code = ?", "api") // 查询code为api的product
-	ttt := db.Where("code = ?", "api").First(&product)
-	fmt.Printf("Get weather: %v \n", ttt)
-
-	// 更新 - 更新product的price为2000
-	db.Model(&product).Update("weather", 2000)
-
-	//api
-	resp, _ := http.Get("http://weather.json.tw/api")
-	defer resp.Body.Close()
-	body, _ := ioutil.ReadAll(resp.Body)
-	// 	fmt.Println(string(body))
-
-	//////////redis	//////////
+	//////////redis exist//////////
 	c, err := redis.Dial("tcp", "127.0.0.1:6379")
+	redisData, err := redis.String(c.Do("GET", "weather"))
 
-	_, err = c.Do("SET", "weather", string(body))
 	if err != nil {
-		fmt.Println("redis set failed:", err)
-	}
+		//////////Db exist//////////
+		db, _ := gorm.Open("sqlite3", "weather.db")
+		db.AutoMigrate(&Weather{})
+		var weather []Weather
+		db.Where("Code = ?", "weather").Find(&weather)
+		if weather == nil {
+			//////////api get data//////////
+			resp, _ := http.Get("http://weather.json.tw/api")
+			defer resp.Body.Close()
+			body, _ := ioutil.ReadAll(resp.Body)
+			fmt.Println(string(body))
 
-	// 	username, err := redis.String(c.Do("GET", "weather"))
-	// 	if err != nil {
-	// 		fmt.Println("redis get failed:", err)
-	// 	} else {
-	// 		fmt.Printf("Get weather: %v \n", username)
-	// 	}
+			//api write to redis
+			_, err = c.Do("SET", "weather", string(body))
+
+			//api write to db
+			db.Create(&Weather{Code: "weather", Data: string(body)})
+			defer db.Close()
+
+			fmt.Printf("Get weather from api: %v \n", weather)
+		} else {
+			fmt.Printf("Get weather from db: %v \n", weather)
+		}
+	} else {
+		fmt.Printf("Get weather from redis: %v \n", redisData)
+	}
 
 }

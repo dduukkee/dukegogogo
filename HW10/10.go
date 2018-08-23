@@ -38,7 +38,7 @@ func main() {
 			min = elapsed
 		}
 		//all
-		fmt.Println("目前有", timeSlice)
+		fmt.Println("單一連線花費時間", elapsed)
 
 		//max min
 		if elapsed > max {
@@ -57,10 +57,10 @@ func main() {
 			sumNum++
 			totalx += valuex
 		}
-		fmt.Println("總時間", totalx)
+		fmt.Println("壓測總數花費時間", totalx)
 
 		//avg
-		fmt.Println("平均", totalx/sumNum)
+		fmt.Println("平均花費時間", totalx/sumNum)
 
 		fmt.Println("-----")
 
